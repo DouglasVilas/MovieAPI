@@ -2,12 +2,12 @@ require("express-async-errors");
 const database = require("./database/sqlite");
 const  migrationsRun = require("./database/sqlite/migrations");
 const AppError = require("./utils/AppError");
-const express = require("express");  // importou express
+const express = require("express");  
 const routes = require("./routes");
 
 migrationsRun(); 
 
-const app = express(); // iniciou o express
+const app = express(); 
 app.use(express.json());
 
 app.use(routes);
@@ -29,7 +29,7 @@ app.use((error, request, response, next) => {
 
 });
 
-const PORT = 3334; //criou um constância e a porta que vai ser usado
-app.listen(PORT, () => console.log(`Server is running on Port ${PORT}`)); //listen e tipo escutando quando ela executar vai rodar a mensagem do console.log (terminal)
+const PORT = 3334; /
+app.listen(PORT, () => console.log(`Server is running on Port ${PORT}`)); 
 
-//parei na aula executando a aplicação 
+//parei na aula Organizando a estrutura do projeto 
