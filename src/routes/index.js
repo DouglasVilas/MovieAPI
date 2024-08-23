@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const usersRoutes = require("./users.routes.js");
-const MovieNotesRoutes = require("./MovieNotes.routes");
-const MovieTagsRoutes = require("./MovieTags.routes");
+const MovieNotesRoutes = require("./movieNotes.routes.js");
+const MovieTagsRoutes = require("./movieTags.routes.js");
 
 
 const routes = Router();
