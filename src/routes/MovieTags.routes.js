@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const MovieTagsController = require("../controllers/MovieTagsController");
+const MovieTagsController = require("../controllers/MovieTagsController.js");
 
 
 const movieTagsRoutes = Router();

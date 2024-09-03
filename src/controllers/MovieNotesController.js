@@ -2,51 +2,27 @@ const knex = require("../database/knex");
 
 class MovieNotesController {
     async create(request, response) {
-        const { title, description, rating, tags, links } = request.body;
+        const { title, description, rating, tags} = request.body;
         const { user_id } = request.params;
         
-        const [note_id] = await knex("notes").insert({
+        const [movieNote_id] = await knex("movieNotes").insert({
             title,
             description,
             rating,
             user_id
         });
         
-        const linksInsert = links.map(link => {
-            return {
-                note_id,
-                url: link,
-                
-            }
-        });
-
-        await knex("links").insert(linksInsert);
-
-        const tagsInsert = tags.map(name => {
-            return {
-                note_id,
-                name,
-                user_id
-            }
-        });
-
-        await knex("tags").insert(tagsInsert);
-
-        response.json();
-    
     }
 
     async show(request, response) {
         const { id } = request.params;
 
-        const note = await knex("notes").where({ id }).first();
-        const tags = await knex("tags").where({ note_id: id }).orderBy("name");
-        const links = await knex("links").where({ note_id: id }).orderBy("created_at");
+        const movieNote = await knex("movieNotes").where({ id }).first();
+        const movieTags = await knex("movieTags").where({ movieNote_id: id }).orderBy("name");
         
         return response.json({
-            ...note,
-            tags,
-            links
+            ...movieNote,
+            movieTags
         });
 
     }
@@ -54,7 +30,7 @@ class MovieNotesController {
     async delete(request, response) {
      
         const { id } = request.params;
-        await knex("notes").where({ id }).delete();
+        await knex("MovieNotes").where({ id }).delete();
 
         return response.json();
 
@@ -63,45 +39,45 @@ class MovieNotesController {
     async index(request, response) {
         const { title, user_id, tags } = request.query;
 
-        let notes;
+        let movieNotes;
 
-        if (tags) {
+        if (movieTags) {
             const filterTags = tags.split(',').map(tag => tag.trim());
 
-            notes = await knex("tags")
+            movieNotes = await knex("movieTags")
                 .select([
-                    "notes.id",
-                    "notes.title",
-                    "notes.user_id",
-                    "notes.rating",
-                    "notes.description",
+                    "movieNotes.id",
+                    "movieNotes.title",
+                    "movieNotes.user_id",
+                    "movieNotes.rating",
+                    "movieNotes.description",
                 ])
                 
-            .where("notes.user_id", user_id)  
-            .whereLike("notes.title", `%${ title }%`)    
-            .whereIn("name", filterTags)
-            .innerJoin("notes", "notes.id", "tags.note_id")
+            .where("movieNotes.user_id", user_id)  
+            .whereLike("movieNotes.title", `%${ title }%`)    
+            .whereIn("name", filterMovieTags)
+            .innerJoin("movieNotes", "movieNotes.id", "movieTags.note_id")
         }
         else {
         
-         notes = await knex("notes")
+         notes = await knex("MovieNotes")
             .where({ user_id })
             .whereLike("title", `%${ title }%`)
             .orderBy("title");
         }
       
 
-        const userTags = await knex("tags").where({ user_id });
-        const notesWitchTags = notes.map(note => {
-        const noteTags = userTags.filter(tag => tag.note_id === note.id);
+        const userMovieTags = await knex("movieTags").where({ user_id });
+        const movieNotesWitchMovieTags = movieNotes.map(MovieNote => {
+        const movieNoteMovieTags = userMovieTags.filter(tag => tag.movieNote_id === movieNote.id);
 
             return {
-                ...note,
-                tags:noteTags
+                ...movieNote,
+                movieTags:movieNoteMovieTags
             }
         });
        
-        return response.json(notesWitchTags);
+        return response.json(movieNotesWitchMovieTags);
 
     }
     
